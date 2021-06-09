@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"github.com/pandulaDW/go-microservice-with-grpc/data"
 	"log"
 	"net/http"
@@ -16,15 +15,18 @@ func NewProducts(l *log.Logger) *Products {
 }
 
 func (p *Products) ServeHttp(rw http.ResponseWriter, r *http.Request) {
-	listOfProducts := data.GetProducts()
-	content, err := json.Marshal(listOfProducts)
+	if r.Method == http.MethodGet {
+		p.getProducts(rw)
+		return
+	}
+	rw.WriteHeader(http.StatusMethodNotAllowed)
+}
+
+func (p *Products) getProducts(rw http.ResponseWriter) {
+	rw.Header().Add("Content-Type", "application/json")
+	products := data.GetProducts()
+	err := products.ToJson(rw)
 	if err != nil {
 		http.Error(rw, "unable to marshal json", http.StatusInternalServerError)
-	}
-
-	rw.Header().Add("Content-Type", "application/json")
-	_, err = rw.Write(content)
-	if err != nil {
-		p.l.Fatal(err)
 	}
 }
