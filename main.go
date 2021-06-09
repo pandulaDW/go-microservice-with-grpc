@@ -14,10 +14,12 @@ func main() {
 	l := log.New(os.Stdout, "product-api: ", log.LstdFlags)
 	hh := handlers.NewHello(l)
 	gb := handlers.NewGoodBye(l)
+	pd := handlers.NewProducts(l)
 
 	router := http.NewServeMux()
 	router.HandleFunc("/", hh.ServeHttp)
 	router.HandleFunc("/goodbye", gb.ServeHttp)
+	router.HandleFunc("/products", pd.ServeHttp)
 
 	server := &http.Server{
 		Addr:         ":4000",
