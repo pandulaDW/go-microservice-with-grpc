@@ -1,5 +1,13 @@
 GET http://localhost:4000/products
 
 ###
-DELETE http://localhost:4000/products
+POST http://localhost:4000/products
+Content-Type: application/json
+
+{
+  "name": "Tea",
+  "description": "Just tea mate",
+  "price": 12.435,
+  "sku": "wr2341"
+}
 

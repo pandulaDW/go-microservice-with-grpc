@@ -31,6 +31,7 @@ func main() {
 			l.Fatal(err)
 		}
 	}()
+	log.Println("server listening to requests at port 4000...")
 
 	sigChan := make(chan os.Signal)
 	signal.Notify(sigChan, os.Interrupt, os.Kill)
