@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/pandulaDW/go-microservice-with-grpc/config"
 	"github.com/pandulaDW/go-microservice-with-grpc/handlers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"regexp"
 	"time"
 )
 
@@ -14,8 +16,8 @@ func main() {
 	l := log.New(os.Stdout, "product-api: ", log.LstdFlags)
 	pd := handlers.NewProducts(l)
 
-	router := http.NewServeMux()
-	router.HandleFunc("/products", pd.ServeHttp)
+	router := new(config.RegexpRouter)
+	router.HandleFunc(regexp.MustCompile("/products"), pd.ServeHttp)
 
 	server := &http.Server{
 		Addr:         ":4000",
