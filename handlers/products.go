@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/pandulaDW/go-microservice-with-grpc/data"
 	"io"
 	"log"
@@ -38,21 +37,14 @@ func (p *Products) ServeHttp(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodPut {
-		re := regexp.MustCompile(`/([0-9]+)`)
-		g := re.FindAllStringSubmatch(r.URL.Path, -1)
-		fmt.Println(g, r.URL.Path)
-		if len(g) != 1 {
-			http.Error(rw, "invalid URI", http.StatusBadRequest)
+		re := regexp.MustCompile(`/products/([0-9]+)$`)
+		matches := re.FindSubmatch([]byte(r.URL.String()))
+
+		var productId int
+		if len(matches) > 0 {
+			productId, _ = strconv.Atoi(string(matches[1]))
 		}
-		if len(g[0]) != 1 {
-			http.Error(rw, "invalid URI", http.StatusBadRequest)
-		}
-		idString := g[0][1]
-		id, err := strconv.Atoi(idString)
-		if err != nil {
-			http.Error(rw, "id should be an integer", http.StatusBadRequest)
-		}
-		p.l.Println(id)
+		p.l.Println(productId)
 		return
 	}
 	rw.WriteHeader(http.StatusMethodNotAllowed)

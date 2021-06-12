@@ -17,7 +17,7 @@ func main() {
 	pd := handlers.NewProducts(l)
 
 	router := new(config.RegexpRouter)
-	router.HandleFunc(regexp.MustCompile("/products"), pd.ServeHttp)
+	router.HandleFunc(regexp.MustCompile(`/products(/[0-9]+)?$`), pd.ServeHttp)
 
 	server := &http.Server{
 		Addr:         ":4000",
