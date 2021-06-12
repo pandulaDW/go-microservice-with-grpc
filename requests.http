@@ -12,4 +12,13 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:4000/products/433
+PUT http://localhost:4000/products/2
+Content-Type: application/json
+
+{
+  "name": "Espresso with a twist",
+  "description": "Short and strong coffee without milk",
+  "price": 2.19,
+  "sku": "fjd245"
+}
+

@@ -43,8 +43,11 @@ func (p *Products) ServeHttp(rw http.ResponseWriter, r *http.Request) {
 		var productId int
 		if len(matches) > 0 {
 			productId, _ = strconv.Atoi(string(matches[1]))
+		} else {
+			http.Error(rw, "invalid uri. product id must be provided", http.StatusBadRequest)
+			return
 		}
-		p.l.Println(productId)
+		p.updateProduct(productId, rw, r)
 		return
 	}
 	rw.WriteHeader(http.StatusMethodNotAllowed)
@@ -72,6 +75,31 @@ func (p *Products) addProduct(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusCreated)
 
+	err = sendSuccessMessage(rw)
+	if err != nil {
+		p.l.Fatal(err)
+	}
+}
+
+func (p *Products) updateProduct(id int, rw http.ResponseWriter, r *http.Request) {
+	p.l.Println(http.MethodPut + ": " + r.URL.String())
+	prod := new(data.Product)
+	err := prod.FromJson(r.Body)
+	if err != nil {
+		http.Error(rw, "unable to unmarshal json", http.StatusBadRequest)
+	}
+	err = data.UpdateProduct(id, prod)
+	if err == data.ErrProductNotFound {
+		http.Error(rw, data.ErrProductNotFound.Error(), http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		http.Error(rw, "unknown server error", http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusCreated)
 	err = sendSuccessMessage(rw)
 	if err != nil {
 		p.l.Fatal(err)
